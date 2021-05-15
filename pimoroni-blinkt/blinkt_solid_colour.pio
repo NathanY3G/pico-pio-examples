@@ -1,0 +1,55 @@
+; Copyright 2021 Nathan Young
+;
+; Licensed under the Apache License, Version 2.0 (the "License");
+; you may not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+;
+;    https://www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an "AS IS" BASIS,
+; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+
+.program blinkt_solid_colour
+.side_set 1
+
+  set pindirs, 3 side 0
+forever:
+  pull block side 0
+  mov isr, osr side 0
+
+  set x, 31 side 0
+start_sequence_loop:
+  set pins, 0 side 1
+  jmp x-- start_sequence_loop side 0
+
+  set y, 7 side 0
+led_loop:
+  out null, 3 side 0  ; Discard the 3 most significant bits - they are are not used
+
+  set x, 2 side 0
+msb_loop:
+  set pins, 1 side 1
+  jmp x-- msb_loop side 0
+
+  set x, 4 side 0
+brightness_loop:
+  out pins, 1 side 1
+  jmp x-- brightness_loop side 0
+
+  set x, 23 side 0
+bgr_loop:
+  out pins, 1 side 1
+  jmp x-- bgr_loop side 0
+
+  mov osr, isr side 0
+  jmp y-- led_loop side 0
+
+  set x, 31 side 0
+end_sequence_loop:
+  set pins, 0 side 1
+  jmp x-- end_sequence_loop side 0
+
+  jmp forever side 0
