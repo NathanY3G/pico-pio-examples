@@ -20,7 +20,7 @@ from time import sleep
 CLOCK_PIN = board.GP19
 DATA_PIN = board.GP18
 
-BRIGHTNESS = 2
+BRIGHTNESS = 1
 PIXEL_VALUES = [
     (BRIGHTNESS << 24) | 0x0000FF,
     (BRIGHTNESS << 24) | 0x00FF00,
@@ -33,7 +33,7 @@ def assemble_program(filename):
         return assemble(file.read())
 
 
-state_machine = rp2pio.StateMachine(
+with rp2pio.StateMachine(
     assemble_program("blinkt_solid_colour.pio"),
     frequency=2_000_000,
     first_out_pin=DATA_PIN,
@@ -44,9 +44,8 @@ state_machine = rp2pio.StateMachine(
     sideset_pin_count=1,
     initial_set_pin_direction=3,
     out_shift_right=False,
-)
-
-while True:
-    for pixel_value in PIXEL_VALUES:
-        state_machine.write(array.array("I", [pixel_value]))
-        sleep(1)
+) as state_machine:
+    while True:
+        for pixel_value in PIXEL_VALUES:
+            state_machine.write(array.array("I", [pixel_value]))
+            sleep(1)
