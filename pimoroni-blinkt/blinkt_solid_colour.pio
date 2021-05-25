@@ -21,18 +21,21 @@ forever:
   mov isr, osr side 0
 
   set x, 31 side 0
+  mov osr, null side 0
 start_sequence_loop:
-  set pins, 0 side 1
+  out pins, 1 side 1
   jmp x-- start_sequence_loop side 0
 
   set y, 7 side 0
 led_loop:
-  out null, 3 side 0  ; Discard the 3 most significant bits - they are are not used
-
   set x, 2 side 0
+  mov osr, ~ null side 0
 msb_loop:
-  set pins, 1 side 1
+  out pins, 1 side 1
   jmp x-- msb_loop side 0
+
+  mov osr, isr side 0 ; Restore the output shift register to the value from the FIFO
+  out null, 3 side 0  ; Discard the 3 most significant bits - they are are not used
 
   set x, 4 side 0
 brightness_loop:
@@ -48,8 +51,9 @@ bgr_loop:
   jmp y-- led_loop side 0
 
   set x, 31 side 0
+  mov osr, null side 0
 end_sequence_loop:
-  set pins, 0 side 1
+  out pins, 1 side 1
   jmp x-- end_sequence_loop side 0
 
   jmp forever side 0
