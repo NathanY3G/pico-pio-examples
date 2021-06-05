@@ -81,12 +81,12 @@ def test_end_sequence(assembled_program):
 
 
 def emulate_program(program, colour_value):
-    stop_after_one_iteration = lambda state: state.program_counter >= len(program) - 1
+    stop_after_one_iteration = lambda _, state: state.program_counter >= len(program) - 1
 
     emulator_gen = emulate(
         program,
         initial_state=State(transmit_fifo=deque([colour_value])),
-        stop_condition=stop_after_one_iteration,
+        stop_when=stop_after_one_iteration,
         side_set_base=1,
         side_set_count=1,
         shift_osr_right=False,
